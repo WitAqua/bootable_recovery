@@ -76,6 +76,7 @@ class Device {
     MENU_BASE = 200,
     MENU_WIPE = 202,
     MENU_ADVANCED = 203,
+    BAD_APPLE = 334,
   };
 
   explicit Device(RecoveryUI* ui);

@@ -476,6 +476,7 @@ class ScreenRecoveryUI : public RecoveryUI, public DrawInterface {
   std::unique_ptr<GRSurface> error_icon_;
   std::vector<std::unique_ptr<GRSurface>> intro_frames_;
   std::vector<std::unique_ptr<GRSurface>> loop_frames_;
+  std::vector<std::unique_ptr<GRSurface>> badapple_frames_;
   size_t current_frame_;
   bool intro_done_;
 

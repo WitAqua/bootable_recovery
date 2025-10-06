@@ -86,6 +86,7 @@ class RecoveryUI {
     ERASING,
     NO_COMMAND,
     ERROR,
+    BADAPPLE,
   };
 
   enum ProgressType {

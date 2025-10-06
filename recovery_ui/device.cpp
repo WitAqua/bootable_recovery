@@ -47,6 +47,7 @@ static std::vector<menu_action_t> g_advanced_actions{
   { "Enable ADB", Device::ENABLE_ADB },
   { "Run graphics test", Device::RUN_GRAPHICS_TEST },
   { "Run locale test", Device::RUN_LOCALE_TEST },
+  { "Bad Apple!!", Device::BAD_APPLE },
   { "Enter rescue", Device::ENTER_RESCUE },
   { "Power off", Device::SHUTDOWN },
 };

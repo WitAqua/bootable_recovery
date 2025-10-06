@@ -407,6 +407,23 @@ static void run_graphics_test(RecoveryUI* ui) {
   ui->ShowText(true);
 }
 
+static void run_badapple(RecoveryUI* ui) {
+  // Switch to graphics screen.
+  ui->ShowText(false);
+
+  ui->SetProgressType(RecoveryUI::DETERMINATE);
+  ui->SetBackground(RecoveryUI::BADAPPLE);
+  ui->ShowProgress(1.0, 220.0);
+  float fraction = 0.0;
+  for (size_t i = 0; i < 100; ++i) {
+    fraction += .01;
+    ui->SetProgress(fraction);
+    usleep(2200000);
+  }
+
+  ui->ShowText(true);
+}
+
 static void WriteUpdateInProgress() {
   std::string err;
   if (!update_bootloader_message({ "--reason=update_in_progress" }, &err)) {
@@ -626,6 +643,10 @@ change_menu:
         screen_ui->CheckBackgroundTextImages();
         break;
       }
+
+      case Device::BAD_APPLE:
+        run_badapple(ui);
+        break;
 
       case Device::MOUNT_SYSTEM: {
         static bool mounted = false;
