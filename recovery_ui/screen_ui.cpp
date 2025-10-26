@@ -432,11 +432,6 @@ ScreenRecoveryUI::~ScreenRecoveryUI() {
 const GRSurface* ScreenRecoveryUI::GetCurrentFrame() const {
   if (current_icon_ == INSTALLING_UPDATE || current_icon_ == ERASING) {
     return intro_done_ ? loop_frames_[current_frame_].get() : intro_frames_[current_frame_].get();
-  } else if (current_icon_ == BADAPPLE) {
-    if (!badapple_frames_.empty()) {
-      return badapple_frames_[current_frame_ % badapple_frames_.size()].get();
-    }
-    return error_icon_.get();
   }
   return error_icon_.get();
 }
@@ -451,9 +446,6 @@ const GRSurface* ScreenRecoveryUI::GetCurrentText() const {
       return installing_text_.get();
     case NO_COMMAND:
       return no_command_text_.get();
-    case BADAPPLE:
-      // BADAPPLE用のテキストがなければerror_text_など適当なものを返す
-      return error_text_.get();
     case NONE:
       abort();
   }
@@ -1041,12 +1033,8 @@ void ScreenRecoveryUI::ProgressThreadLoop() {
         } else {
           current_frame_ = (current_frame_ + 1) % loop_frames_.size();
         }
+
         redraw = true;
-      } else if (current_icon_ == BADAPPLE && !show_text) {
-        if (!badapple_frames_.empty()) {
-          current_frame_ = (current_frame_ + 1) % badapple_frames_.size();
-          redraw = true;
-        }
       }
 
       // move the progress bar forward on timed intervals, if configured
@@ -1239,7 +1227,6 @@ void ScreenRecoveryUI::LoadAnimation() {
   dirent* de;
   std::vector<std::string> intro_frame_names;
   std::vector<std::string> loop_frame_names;
-  std::vector<std::string> badapple_frame_names;
 
   while ((de = readdir(dir.get())) != nullptr) {
     int value, num_chars;
@@ -1247,8 +1234,6 @@ void ScreenRecoveryUI::LoadAnimation() {
       intro_frame_names.emplace_back(de->d_name, num_chars);
     } else if (sscanf(de->d_name, "loop%d%n.png", &value, &num_chars) == 1) {
       loop_frame_names.emplace_back(de->d_name, num_chars);
-    } else if (sscanf(de->d_name, "badapple%d%n.png", &value, &num_chars) == 1) {
-      badapple_frame_names.emplace_back(de->d_name, num_chars);
     }
   }
 
@@ -1262,7 +1247,6 @@ void ScreenRecoveryUI::LoadAnimation() {
 
   std::sort(intro_frame_names.begin(), intro_frame_names.end());
   std::sort(loop_frame_names.begin(), loop_frame_names.end());
-  std::sort(badapple_frame_names.begin(), badapple_frame_names.end());
 
   intro_frames_.clear();
   intro_frames_.reserve(intro_frames);
@@ -1274,12 +1258,6 @@ void ScreenRecoveryUI::LoadAnimation() {
   loop_frames_.reserve(loop_frames);
   for (const auto& frame_name : loop_frame_names) {
     loop_frames_.emplace_back(LoadBitmap(frame_name));
-  }
-
-  badapple_frames_.clear();
-  badapple_frames_.reserve(badapple_frame_names.size());
-  for (const auto& frame_name : badapple_frame_names) {
-      badapple_frames_.emplace_back(LoadBitmap(frame_name));
   }
 }
 
